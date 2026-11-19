@@ -1,4 +1,4 @@
-FROM golang:1.25 AS builder
+FROM golang:1.26.11 AS builder
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
 
