@@ -80,6 +80,18 @@ the non-UUID value of `idAttribute`).
   groups is not implemented.
 - A webhook to trigger a re-scan is tracked in #2.
 
+## CI and releases
+
+GitLab CI (`.gitlab-ci.yml`) uses the shared baseline from modelsrv: lint, build, unit tests, image
+build and scans.
+
+GitLab push-mirrors `main` and tags to GitHub. There, `.github/workflows/ci.yml` runs all tests
+including the OpenLDAP integration test, and `container-image-publish.yml` pushes
+`ghcr.io/emeland-io/modelsrv-ldap-sensor` for `main` and every `v*` tag. To release, push a `vX.Y.Z`
+tag to GitLab.
+
+
+
 ## Development
 
 ```sh
