@@ -8,10 +8,11 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o modelsrv-ldap-sensor ./cmd/modelsrv-ldap-sensor
 
-FROM alpine:3.21
-RUN apk add --no-cache ca-certificates
+# Static binary on distroless: includes CA certificates (for ldaps://) and runs
+# as the numeric non-root user 65532.
+FROM gcr.io/distroless/static:nonroot
 WORKDIR /
 COPY --from=builder /workspace/modelsrv-ldap-sensor .
-USER nobody
+USER 65532:65532
 
 ENTRYPOINT ["/modelsrv-ldap-sensor"]
