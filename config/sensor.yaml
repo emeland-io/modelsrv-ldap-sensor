@@ -7,8 +7,9 @@ pollInterval: 5m
 
 ldap:
   url: "ldap://localhost:389"
-  # Leave bindDN empty for an anonymous bind. The password can also be given
-  # through the LDAP_BIND_PASSWORD environment variable.
+  # Leave bindDN empty for an anonymous bind. Do not put a real password into
+  # this file: set LDAP_BIND_PASSWORD instead, which takes precedence. The value
+  # below only matches the local test server (osixia/openldap, see README).
   bindDN: "cn=admin,dc=example,dc=org"
   bindPassword: "admin"
   # startTLS: true

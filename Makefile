@@ -1,4 +1,4 @@
-# Local tasks aligned with .github/workflows/ci.yml (plus common extras).
+# Local tasks, the same steps CI runs (plus common extras).
 
 GOLANGCI_LINT_VERSION ?= v2.11.4
 TOOL_DIR := $(abspath bin)
