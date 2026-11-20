@@ -22,6 +22,7 @@ func main() {
 	var (
 		configPath   = flag.String("config", envOrDefault("SENSOR_CONFIG", "config/sensor.yaml"), "Path to YAML config")
 		listenAddr   = flag.String("listen", envOrDefault("SENSOR_LISTEN_ADDR", "localhost:24300"), "HTTP listen address for this sensor's modelsrv API")
+		selfURL      = flag.String("self-url", envOrDefault("SENSOR_SELF_URL", ""), "Base API URL under which subscribers reach this sensor, stamped as event origin (e.g. http://ldap-sensor.ns.svc:24300/api/). Defaults to http://<listen>/api/")
 		pollInterval = flag.Duration("poll-interval", envDurationOrDefault("SENSOR_POLL_INTERVAL", 0), "Scan interval (overrides config when > 0)")
 	)
 	flag.Parse()
@@ -41,13 +42,13 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
-	if err := run(ctx, cfg, *listenAddr, slog); err != nil {
+	if err := run(ctx, cfg, *listenAddr, *selfURL, slog); err != nil {
 		slog.Fatalw("sensor exited with error", "error", err)
 	}
 }
 
-func run(ctx context.Context, cfg config.Config, listenAddr string, log *zap.SugaredLogger) error {
-	srv, err := sensor.New(listenAddr, cfg.Subscribers, log)
+func run(ctx context.Context, cfg config.Config, listenAddr, selfURL string, log *zap.SugaredLogger) error {
+	srv, err := sensor.New(listenAddr, selfURL, cfg.Subscribers, log)
 	if err != nil {
 		return fmt.Errorf("start sensor: %w", err)
 	}

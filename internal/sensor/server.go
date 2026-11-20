@@ -30,13 +30,17 @@ type Server struct {
 }
 
 // New starts a sensor server bound to listenAddr, pre-registering any provided
-// downstream subscriber URLs.
-func New(listenAddr string, subscribers []string, log *zap.SugaredLogger) (*Server, error) {
+// downstream subscriber URLs. selfURL is this sensor's own base API URL as
+// seen by its subscribers; it is stamped as the origin of every event.
+func New(listenAddr, selfURL string, subscribers []string, log *zap.SugaredLogger) (*Server, error) {
 	if log == nil {
 		log = zap.NewNop().Sugar()
 	}
+	if selfURL == "" {
+		selfURL = DefaultSelfURL(listenAddr)
+	}
 
-	b, err := backend.New(backend.WithLogger(log))
+	b, err := backend.New(backend.WithLogger(log), backend.WithSelfURL(selfURL))
 	if err != nil {
 		return nil, fmt.Errorf("create backend: %w", err)
 	}
@@ -97,4 +101,11 @@ func (s *Server) Close() error {
 // forwards it to subscribers.
 func (s *Server) Emit(ev events.Event) error {
 	return s.Model().Apply(ev)
+}
+
+// DefaultSelfURL derives the base API URL from the listen address. It is only
+// right when subscribers can reach the sensor at that address; behind a
+// Service or with a wildcard bind address, pass an explicit self URL.
+func DefaultSelfURL(listenAddr string) string {
+	return fmt.Sprintf("http://%s/api/", listenAddr)
 }
