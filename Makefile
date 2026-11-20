@@ -26,7 +26,7 @@ help:
 .DEFAULT_GOAL := ci
 
 CONFIG ?= config/sensor.yaml
-LISTEN ?= localhost:24200
+LISTEN ?= localhost:24300
 
 ci: mod-download mod-verify lint build test
 
