@@ -1,0 +1,16 @@
+# CI for modelsrv-ldap-sensor. All TBC setup (golang + docker, kaniko, runner
+# tag, pinned versions) comes from the shared baseline in modelsrv.
+#
+# Releases are not built here: GitLab push-mirrors main and tags to GitHub,
+# where .github/workflows/container-image-publish.yml pushes the image to
+# ghcr.io.
+
+include:
+  - project: odc/emeland/modelsrv
+    ref: main
+    file: .gitlab/ci/base/go-service.gitlab-ci.yml
+
+variables:
+  # The repo has its own .golangci.yml. Drop TBC's default "-E gosec" so the
+  # project's lint configuration decides what is enforced.
+  GO_CI_LINT_ARGS: "./..."
