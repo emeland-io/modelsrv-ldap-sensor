@@ -1,0 +1,29 @@
+# Downstream model servers that receive the Identity and Group events.
+subscribers:
+  - "http://localhost:24000/api/"
+
+# How often the directory is scanned. Defaults to 5m when unset.
+pollInterval: 5m
+
+ldap:
+  url: "ldap://localhost:389"
+  # Leave bindDN empty for an anonymous bind. Do not put a real password into
+  # this file: set LDAP_BIND_PASSWORD instead, which takes precedence. The value
+  # below only matches the local test server (osixia/openldap, see README).
+  bindDN: "cn=admin,dc=example,dc=org"
+  bindPassword: "admin"
+  # startTLS: true
+  # caFile: /etc/ssl/ldap-ca.pem
+  pageSize: 500
+
+identities:
+  baseDN: "ou=people,dc=example,dc=org"
+  filter: "(objectClass=inetOrgPerson)"
+  nameAttribute: cn
+  # idAttribute: entryUUID   # stable id on OpenLDAP; objectGUID on AD
+
+groups:
+  baseDN: "ou=groups,dc=example,dc=org"
+  filter: "(objectClass=groupOfNames)"
+  nameAttribute: cn
+  memberAttribute: member
